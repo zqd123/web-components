@@ -83,14 +83,13 @@
           // `;
 
           // 将创建好的元素添加到影子DOM中
-          
+          // shadowRoot.appendChild(style);
+          // console.log(style.isConnected);
 
           // 引用外部css文件
           const link = document.createElement("link");
           link.setAttribute("rel", "stylesheet");
           link.setAttribute("href", "style.css");
-          // shadowRoot.appendChild(style);
-          // console.log(style.isConnected);
           shadowRoot.appendChild(link);
           shadowRoot.appendChild(wrapper);
           wrapper.appendChild(icon);
