@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        main {
+            padding: 20px;
+        }
+        span{
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div style="white-space: pre-wrap;">
+        说明：    
+            1. 外部样式不会影响shadow DOM内部样式;
+            2. shadow DOM内部样式不会影响外部样式;
+            3. 外部无法通过一般方式获取shadow DOM中元素;
+            4. 可以通过shadowRoot获取shadow DOM中的元素(attachShadow中的mode必须为open，如果closed模式，则无法获取元素);
+        </div>
+        <div>下面是demo：</div>
+        <div>
+            <span>这是一个shadow DOM外面的span元素</span>
+        </div>
+        <div id="host"></div>
+        <!-- 操作DOM -->
+        <button id="upper" type="button">将 span 元素转换为大写</button>
+        <button id="reload" type="button">重新加载</button>
+    </main>
+    <script>
+        const host = document.getElementById('host');
+        // 创建一个影子根
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const span = document.createElement('span');
+        span.textContent = '这是一个shadow DOM中的span元素';
+        // 将span添加到影子根中
+        shadowRoot.appendChild(span);
+
+
+        const t = document.querySelector('#upper');
+        t.onclick = () => {
+            const spans = document.querySelectorAll('span');
+            console.log("🚀 ~ spans:", spans)
+            // 将span元素的文本转换为大写
+            spans.forEach(s => {
+                s.textContent = s.textContent.toUpperCase();
+            });
+            const shadowSpans = host.shadowRoot.querySelectorAll('span');
+            shadowSpans.forEach(s => {
+                s.textContent = s.textContent.toUpperCase();
+            });
+        };
+        //重新加载页面
+        const reload = document.querySelector("#reload");
+        reload.addEventListener("click", () => document.location.reload());
+
+
+        // const style = document.createElement('style');
+        // style.textContent = `
+        //     span {
+        //         color: red;
+        //         font-weight: bold;
+        //         font-size: 20px;
+        //     }
+        // `;
+        // // 将样式添加到影子根中
+        // shadowRoot.appendChild(style);
+
+        const styleSheet = new CSSStyleSheet();
+        styleSheet.replaceSync(`
+            span {
+                color: blue;
+                font-weight: bold;
+                font-size: 20px;
+            }
+        `);
+
+        shadowRoot.adoptedStyleSheets = [styleSheet];
+    </script>
+</body>
+</html>
